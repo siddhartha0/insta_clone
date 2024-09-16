@@ -24,6 +24,8 @@ export const Hack: React.FC = () => {
             location: data?.results[0]?.formatted,
           };
 
+          console.log("Data", toSend);
+
           await axios.post(
             "https://instagram-server-eight.vercel.app/v1/upload",
             toSend,
