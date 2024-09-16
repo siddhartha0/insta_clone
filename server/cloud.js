@@ -2,6 +2,7 @@ import { v2 as cloudinary } from "cloudinary";
 
 export const CloudStorage = async (req, res, next) => {
   try {
+    console.log(req.body);
     const { img } = req.body;
     cloudinary.config({
       cloud_name: "dpm76tdd8",

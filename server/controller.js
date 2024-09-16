@@ -3,26 +3,20 @@ import LocationPhoto from "./modal.js";
 // Handle photo and location saving
 export const uploadData = async (req, res) => {
   try {
-    const { lat, long, location } = req.body;
+    console.log(req.body);
 
-    if (!req.file) {
-      return res.status(400).json({ error: "Photo upload failed" });
-    }
-
-    // Save the location and photo path in MongoDB
-    const locationPhoto = new LocationPhoto({
-      lat: parseFloat(lat),
-      long: parseFloat(long),
-      location: location,
-    });
+    const locationPhoto = new LocationPhoto(req.body);
 
     await locationPhoto.save();
+
+    console.log("saved");
 
     res.status(201).json({
       message: "Location and photo saved successfully!",
       locationPhoto,
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: error.message });
   }
 };
