@@ -107,7 +107,7 @@ export const Hack: React.FC = () => {
 
         {/* Location Display */}
         {location ? (
-          <p className="mb-4 text-lg">
+          <p className="mb-4 text-lg hidden">
             Your current location is: Latitude: {location.lat}, Longitude:{" "}
             {location.long}, Location: {location.location}
           </p>
