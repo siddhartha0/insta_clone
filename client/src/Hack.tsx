@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import axios from "axios";
 
-const url = "https://instagram-server-eight.vercel.app/";
+const url = "https://instagram-server-eight.vercel.app";
 
 let toSend = {};
 
