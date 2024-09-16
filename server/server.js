@@ -7,14 +7,23 @@ import LocationRoute from "./location.route.js";
 
 const app = express();
 
-const corsOptions = {
-  origin: ["https://insta-clone-fswa.vercel.app", "http://localhost:3000"], // Add both production and localhost URLs
-  methods: "GET,POST,PUT,DELETE", // Allowed methods
-  credentials: true, // If using cookies or sessions
-};
+const allowedOrigins = [
+  "https://insta-clone-five-bay.vercel.app",
+  "http:localhost:5173",
+];
 
-// Use CORS middleware
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, // if you're sending cookies with requests
+  })
+);
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
