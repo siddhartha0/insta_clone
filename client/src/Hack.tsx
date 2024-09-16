@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
-const Hack: React.FC = () => {
+export const Hack: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [location, setLocation] = useState<{
@@ -223,5 +223,3 @@ const Hack: React.FC = () => {
     </div>
   );
 };
-
-export default Hack;
