@@ -11,13 +11,6 @@ const LocationPhotoSchema = new mongoose.Schema({
   location: {
     type: String,
   },
-  photo: {
-    type: String, // Will store the file path of the uploaded photo
-  },
-  date: {
-    type: Date,
-    default: Date.now,
-  },
 });
 
 // Create a Mongoose model
