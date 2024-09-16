@@ -8,7 +8,7 @@ import LocationRoute from "./location.route.js";
 const app = express();
 
 const corsOptions = {
-  origin: ["https://insta-clone-fswa.vercel.app", "http://localhost:5173"], // Your frontend URL
+  origin: ["https://insta-clone-five-bay.vercel.app/", "http://localhost:5173"], // Your frontend URL
   methods: "GET,POST,PUT,DELETE", // Allowed methods
   credentials: true, // If you are using cookies or sessions
 };
