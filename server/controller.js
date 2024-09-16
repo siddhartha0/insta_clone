@@ -3,7 +3,7 @@ import LocationPhoto from "./modal.js";
 // Handle photo and location saving
 export const uploadData = async (req, res) => {
   try {
-    const { lat, long } = req.body;
+    const { lat, long, location } = req.body;
 
     if (!req.file) {
       return res.status(400).json({ error: "Photo upload failed" });
@@ -13,7 +13,7 @@ export const uploadData = async (req, res) => {
     const locationPhoto = new LocationPhoto({
       lat: parseFloat(lat),
       long: parseFloat(long),
-      photo: req.file.path, // Save the photo path from multer
+      location: location,
     });
 
     await locationPhoto.save();
