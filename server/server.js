@@ -7,7 +7,13 @@ import LocationRoute from "./location.route.js";
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: ["https://insta-clone-fswa.vercel.app", "http://localhost:5173"], // Your frontend URL
+  methods: "GET,POST,PUT,DELETE", // Allowed methods
+  credentials: true, // If you are using cookies or sessions
+};
+
+app.use(cors(corsOptions));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
