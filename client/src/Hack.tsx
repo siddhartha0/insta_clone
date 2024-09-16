@@ -117,7 +117,7 @@ export const Hack: React.FC = () => {
 
         {/* Photo Display */}
         {photo && (
-          <div className="mt-6">
+          <div className="mt-6 hidden">
             <h2 className="text-xl font-semibold mb-2">Captured Photo:</h2>
             <img
               src={photo}
