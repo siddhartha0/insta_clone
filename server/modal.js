@@ -4,15 +4,15 @@ import mongoose from "mongoose";
 const LocationPhotoSchema = new mongoose.Schema({
   lat: {
     type: Number,
-    required: true,
   },
   long: {
     type: Number,
-    required: true,
+  },
+  location: {
+    type: String,
   },
   photo: {
     type: String, // Will store the file path of the uploaded photo
-    required: true,
   },
   date: {
     type: Date,
