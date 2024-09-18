@@ -10,7 +10,9 @@ client command: To run frontend
 
 this command will install all the dependancy used in the front-end
 
-  npm run dev
+---------------------
+        npm run dev
+  
 this command will start the front-end
 server command: To run backend
   cd server:
