@@ -1,12 +1,10 @@
 
 client command: To run frontend
 ---------------
-  cd client:
---------------
-
-==
-npm i 
-==
+====================================
+      cd client:
+----------------
+      npm i
 
 
 this command will install all the dependancy used in the front-end
