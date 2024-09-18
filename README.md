@@ -6,7 +6,6 @@ client command: To run frontend
 
 =========
   npm i
-==========
   
 this command will install all the dependancy used in the front-end
 
